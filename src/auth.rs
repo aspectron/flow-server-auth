@@ -7,7 +7,8 @@ use tide::{
 };
 use serde::{Deserialize, Serialize};
 use serde_json::json;
-use crate::User;
+use std::sync::Arc;
+use crate::{User, Store};
 
 
 
@@ -80,20 +81,26 @@ impl<'a> From<LoginResponse<'a>> for Response{
 
 
 pub struct Authenticator{
-    auth_url:String
+    auth_url:String,
+    store:Arc<dyn Store>
 }
 
 impl<'a> Authenticator{
-    pub fn new(auth_url:&str)->Self{
+    pub fn new<S>(auth_url:&str, store:S)->Self
+    where
+        S: Store
+    {
         Authenticator{
-            auth_url:auth_url.to_string()
+            auth_url:auth_url.to_string(),
+            store:Arc::new(store)
         }
     }
 
     pub fn authenticate(&self, req:LoginRequest)->(bool, String){
-        self.authenticate_impl(req.username, req.password)
+        self.store.authenticate(req.username, req.password)
     }
 
+    /*
     pub fn authenticate_impl(&self, username:String, password:String)->(bool, String){
         let mut success = false;
         let mut uid = "".to_string();
@@ -104,6 +111,7 @@ impl<'a> Authenticator{
 
         (success, uid)
     }
+    */
 
     pub fn init<State:Clone + Send + Sync + 'static+std::fmt::Debug>(self, app:&mut Server<State>){
         let auth_url = self.auth_url.clone();
