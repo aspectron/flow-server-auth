@@ -1,0 +1,11 @@
+[package]
+name = "flow-server-auth"
+version = "0.1.0"
+description = "flow-server-auth"
+edition = "2021"
+
+[dependencies]
+tide = "*"
+async-trait = "*"
+serde_json = "*"
+serde = "*"
