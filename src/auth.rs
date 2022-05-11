@@ -100,19 +100,6 @@ impl<'a> Authenticator{
         self.store.authenticate(req.username, req.password)
     }
 
-    /*
-    pub fn authenticate_impl(&self, username:String, password:String)->(bool, String){
-        let mut success = false;
-        let mut uid = "".to_string();
-        if username.eq("test") && password.eq("123"){
-            success = true;
-            uid = "1233344454545".to_string();
-        }
-
-        (success, uid)
-    }
-    */
-
     pub fn init<State:Clone + Send + Sync + 'static+std::fmt::Debug>(self, app:&mut Server<State>){
         let auth_url = self.auth_url.clone();
         app.with(self);
@@ -139,6 +126,7 @@ where
     State: Clone + Send + Sync + 'static,
 {
     async fn handle(&self, mut req: Request<State>, next: Next<'_, State>) -> Result {
+
         let path = req.url().path().to_string();
         let url = path.trim_end_matches('/');
 
