@@ -1,6 +1,4 @@
 extern crate tide;
-use std::sync::Arc;
-use std::borrow::Borrow;
 pub use async_trait::async_trait;
 use tide::{
     Response, Server, Request, Next, Result, Body,
@@ -80,14 +78,6 @@ impl<'a> From<LoginResponse<'a>> for Response{
     }
 }
 
-pub fn json_response(success:bool, code:&str, msg:&str)->Response{
-    Response::from(json!({
-        "success":success,
-        "code":code,
-        "msg":msg
-    }))
-}
-
 
 pub struct Authenticator{
     auth_url:String
@@ -131,49 +121,8 @@ impl<'a> Authenticator{
             println!("login_response: {:?}", login_response);
             Ok(login_response)
         });
-        /*
-        app.at("/ *").all(|req: Request<State>| async move{
-            let path = req.url().path().to_string();
-            let url = path.trim_end_matches('/');
-            println!("request is url {}", url);
-
-            Ok("xxxxx123")
-            //Ok(next.run(req).await)
-        });
-        
-        
-        let module = Arc::new(&self);
-
-        let mut route = app.at(&self.auth_url);
-        route.get(|req: Request<State>| async move{
-            Ok("")
-            //Ok(format!("login view: {}", self.auth_url))
-        });
-
-        route.post(|req| async{
-            let a:&Authenticator = module.borrow();
-            Ok(format!("url:::{:?}", a.auth_url))
-        });
-        */
-
-        //app.at(&self.auth_url).post(|req: Request<State>| async move{
-        //    Ok("{}")
-            //return Ok(json_responce(false, "ALREADY-LOGGED-IN", &self.auth_url));
-        //});
-
-       
     }
 }
-
-/*
-impl<'a> FnOnce<Args> for Authenticator
-where
-    State: Clone + Send + Sync + 'static
-{
-
-
-}
-*/
 
 
 #[async_trait]
